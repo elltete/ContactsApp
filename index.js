@@ -1,10 +1,12 @@
 
 import { readContacts , addContact, deleteContact , help } from "././modules.js";
+import { _error } from "./errors.js";
 
 const args = process.argv.splice(2);
 
+const input = args[0].toLowerCase();
 
-switch (args[0]) {
+switch (input) {
     case "help":
         console.log(help());
     break;
@@ -12,13 +14,14 @@ switch (args[0]) {
         console.log(readContacts(args[1]));
     break;
     case "add":
+        //console.log(addContact(args);
         console.log(addContact(args[1], args[2], args[3], args[4]));
     break;
     case "delete":
         console.log(deleteContact(args[1]));
     break;
     default:
-        console.log("Invalid Arguments...")
+        console.log(_error("invalidArgs"));
 }
 
 

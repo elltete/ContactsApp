@@ -1,7 +1,8 @@
 *************************
 How to use:
-node index.js help
-node index.js list [favoritos]
-node index.js add "Nombre del Contacto" "Telefono" "Email" [favorito]
-node index.js delete "ID_del_Contacto"
+node index.js help -> information about commands
+node index.js list -> list all Contacts 
+node index.js list favoritos -> list all favourites Contacts 
+node index.js add "Contact_name" "Phone" "Email" [favorito] -> create contact
+node index.js delete "Contact_ID" -> delete contact
 *************************

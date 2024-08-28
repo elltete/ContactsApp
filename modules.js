@@ -1,12 +1,13 @@
 import fs from "node:fs";
 import { randomUUID } from "crypto";
-import { isNumber, isUndefined } from "node:util";
+import { _error } from "./errors.js";
 
 const URL_FILE = "./data/contacts.json";
 const HELP_FILE = "./data/help.txt";
 
 const readContacts = (fav) => {
   const exist = fs.existsSync(URL_FILE);
+
   if (!exist) {
     fs.writeFileSync(URL_FILE, JSON.stringify([]));
     return [];
@@ -15,47 +16,54 @@ const readContacts = (fav) => {
       const data = fs.readFileSync(URL_FILE);
       return JSON.parse(data);
     } else {
-      if (fav === "favorito") {
-
+      if (fav === "favoritos") {
         const data = JSON.parse(fs.readFileSync(URL_FILE));
 
-        const favorito2 = data.filter((contact) => contact.fav == true);
+        const dataFavs = data.filter((contact) => contact.fav === true);
 
-        return favorito2;
-
+        return dataFavs;
       } else {
-        console.log("parametro incorrecto");
+        return _error("invalidArgs");
       }
     }
   }
 };
 
+const validateArgs = (name, phone, email) => {
+  if (name === undefined || phone === undefined || email === undefined) {
+    return true;
+  } else {
+    return false;
+  }
+};
+
 const addContact = (name, phone, email, fav) => {
-  if (name === undefined || name.length <= 3) return "Nombre menor a 4 letras";
+  if (validateArgs(name, phone, email)) return _error("invalidArgs");
 
-  if (isNaN(phone)) return "Phone invalido";
+  if (name.length <= 4) return _error("invalidName");
 
-  if (email === undefined || !email.includes("@"))
-    return "direccion de email incorrecta";
+  if (isNaN(phone)) return _error("invalidPhone");
+
+  if (!email.includes("@")) return _error("invalidEmail");
+
+  if (fav !== undefined) fav = fav.toLowerCase();
 
   if (fav !== undefined && fav !== "true" && fav !== "false")
-    return "opcion invalida en favoritos";
+    return _error("invalidArgs");
 
   if (fav === "true") fav = true;
-  
-  if (fav === "false") fav = false;
 
-  if (fav === undefined) fav = false;
+  if (fav === "false" || fav === undefined) fav = false;
 
   const contact = {
     id: randomUUID(),
-    name,
+    name: name.toLowerCase(),
     phone,
-    email,
+    email: email.toLowerCase(),
     fav,
   };
 
-  const contactData = JSON.parse(fs.readFileSync(URL_FILE));
+  const contactData = readContacts();
 
   contactData.push(contact);
 
@@ -65,17 +73,13 @@ const addContact = (name, phone, email, fav) => {
 };
 
 const deleteContact = (id) => {
-  if (!id) {
-    return "Id is required";
-  }
+  if (!id) return _error("invalidArgs");
 
-  const contactData = JSON.parse(fs.readFileSync(URL_FILE));
+  const contactData = readContacts();
 
   const foundContact = contactData.find((contact) => contact.id === id);
 
-  if (!foundContact) {
-    return "Id not found";
-  }
+  if (!foundContact) return _error("invalidID");
 
   const newContats = contactData.filter((contact) => contact.id !== id);
 
@@ -85,9 +89,9 @@ const deleteContact = (id) => {
 };
 
 const help = () => {
-  const exist = fs.existsSync(HELP_FILE); //->boolean
+  const exist = fs.existsSync(HELP_FILE);
   if (!exist) {
-    return "File not found";
+    return _error("invalidFile");
   } else {
     return fs.readFileSync(HELP_FILE, "utf-8");
   }

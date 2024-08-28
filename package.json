@@ -1,7 +1,7 @@
 {
     "name": "contactsapp",
     "version": "1.0.0",
-    "description": ":: Files",
+    "description": "Ejercicio Node.js Contactos",
     "main": "index.js",
     "type": "module",
     "scripts": {
