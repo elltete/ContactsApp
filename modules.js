@@ -58,7 +58,7 @@ const addContact = (name, phone, email, fav) => {
   const contact = {
     id: randomUUID(),
     name: name.toLowerCase(),
-    phone,
+    phone: +phone,
     email: email.toLowerCase(),
     fav,
   };
